@@ -208,8 +208,8 @@ func (b *BlobClient) AbortCopyFromURL(ctx context.Context, copyID string, option
 // To remove all tags from the blob, call this operation with no tags set.
 // https://docs.microsoft.com/en-us/rest/api/storageservices/set-blob-tags
 func (b *BlobClient) SetTags(ctx context.Context, options *SetTagsBlobOptions) (BlobSetTagsResponse, error) {
-	blobSetTagsOptions, modifiedAccessConditions := options.pointers()
-	resp, err := b.client.SetTags(ctx, blobSetTagsOptions, modifiedAccessConditions)
+	blobSetTagsOptions, leaseAccessConditions, modifiedAccessConditions := options.pointers()
+	resp, err := b.client.SetTags(ctx, blobSetTagsOptions, leaseAccessConditions, modifiedAccessConditions)
 
 	return resp, handleError(err)
 }

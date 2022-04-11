@@ -258,11 +258,12 @@ type SetTagsBlobOptions struct {
 	TagsMap map[string]string
 
 	ModifiedAccessConditions *ModifiedAccessConditions
+	LeaseAccessConditions    *LeaseAccessConditions
 }
 
-func (o *SetTagsBlobOptions) pointers() (*BlobSetTagsOptions, *ModifiedAccessConditions) {
+func (o *SetTagsBlobOptions) pointers() (*BlobSetTagsOptions, *LeaseAccessConditions, *ModifiedAccessConditions) {
 	if o == nil {
-		return nil, nil
+		return nil, nil, nil
 	}
 
 	options := &BlobSetTagsOptions{
@@ -274,7 +275,7 @@ func (o *SetTagsBlobOptions) pointers() (*BlobSetTagsOptions, *ModifiedAccessCon
 		VersionID:                 o.VersionID,
 	}
 
-	return options, o.ModifiedAccessConditions
+	return options, o.LeaseAccessConditions, o.ModifiedAccessConditions
 }
 
 // GetTagsBlobOptions provides set of configurations for GetTags operation

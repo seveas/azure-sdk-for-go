@@ -2432,8 +2432,8 @@ func (client *blobClient) setMetadataHandleResponse(resp *http.Response) (BlobSe
 
 // SetTags - The Set Tags operation enables users to set tags on a blob.
 // If the operation fails it returns the *StorageError error type.
-func (client *blobClient) SetTags(ctx context.Context, blobSetTagsOptions *BlobSetTagsOptions, modifiedAccessConditions *ModifiedAccessConditions) (BlobSetTagsResponse, error) {
-	req, err := client.setTagsCreateRequest(ctx, blobSetTagsOptions, modifiedAccessConditions)
+func (client *blobClient) SetTags(ctx context.Context, blobSetTagsOptions *BlobSetTagsOptions, leaseAccessConditions *LeaseAccessConditions, modifiedAccessConditions *ModifiedAccessConditions) (BlobSetTagsResponse, error) {
+	req, err := client.setTagsCreateRequest(ctx, blobSetTagsOptions, leaseAccessConditions, modifiedAccessConditions)
 	if err != nil {
 		return BlobSetTagsResponse{}, err
 	}
@@ -2448,7 +2448,7 @@ func (client *blobClient) SetTags(ctx context.Context, blobSetTagsOptions *BlobS
 }
 
 // setTagsCreateRequest creates the SetTags request.
-func (client *blobClient) setTagsCreateRequest(ctx context.Context, blobSetTagsOptions *BlobSetTagsOptions, modifiedAccessConditions *ModifiedAccessConditions) (*policy.Request, error) {
+func (client *blobClient) setTagsCreateRequest(ctx context.Context, blobSetTagsOptions *BlobSetTagsOptions, leaseAccessConditions *LeaseAccessConditions, modifiedAccessConditions *ModifiedAccessConditions) (*policy.Request, error) {
 	req, err := runtime.NewRequest(ctx, http.MethodPut, client.con.Endpoint())
 	if err != nil {
 		return nil, err
@@ -2471,6 +2471,9 @@ func (client *blobClient) setTagsCreateRequest(ctx context.Context, blobSetTagsO
 	}
 	if blobSetTagsOptions != nil && blobSetTagsOptions.RequestID != nil {
 		req.Raw().Header.Set("x-ms-client-request-id", *blobSetTagsOptions.RequestID)
+	}
+	if leaseAccessConditions != nil && leaseAccessConditions.LeaseID != nil {
+		req.Raw().Header.Set("x-ms-lease-id", *leaseAccessConditions.LeaseID)
 	}
 	if modifiedAccessConditions != nil && modifiedAccessConditions.IfTags != nil {
 		req.Raw().Header.Set("x-ms-if-tags", *modifiedAccessConditions.IfTags)
